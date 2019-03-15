@@ -61,15 +61,35 @@ def handle_dialog(req, res):
         'нет',
         'не хочу',
         'в другой раз',
-        'не начнем',
+        'не начнем'
     ]:
         # Пользователь отказался, прощаемся.
         res['response']['text'] = 'Проверим твои знания в следующий раз!'
         return
 
     # Если согласился, то проверяем его навыки табличного умножения!
-    a = random.randint(0, 10)
-    b = random.randint(0, 10)
-    res['response']['text'] = "%i * %i = " % (a,b)
-    res['response']['buttons'] = get_suggests(user_id)
-
+    ready = 1
+    while ready :
+        a = random.randint(0, 10)
+        b = random.randint(0, 10)
+        res['response']['text'] = "%i * %i = " % (a,b)
+        res['response']['buttons'] = get_suggests(user_id)
+        if  res['response']['buttons'].lower() in [
+             'нет',
+             'не хочу',
+             'в другой раз',
+             'не начнем'
+        ]:
+        # Пользователь хочет завершить работу, прощаемся.
+            ready = 0
+        if  res['response']['buttons'].lower() in [
+             'не знаю',
+             'ответь сама',
+             'какой ответ?',
+        ]:
+        # Пользователь хочет знать правильный ответ
+            res['response']['text'] = a*b        
+         if res['response']['buttons'].lower() == a*b :
+            res['response']['text'] = "Верно!"
+         else:
+            res['response']['text'] = "Не правильно :(. Будет %i" % (a*b)
